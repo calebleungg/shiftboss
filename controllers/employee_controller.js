@@ -47,12 +47,12 @@ const searchFor = (req, res) => {
 
 const addShift = (req, res) => {
 
-    const { weekId, day, date, shiftIndex, from, to} = req.body
-    console.log({ weekId, day, date, shiftIndex, from, to })
+    const { weekId, day, date, shiftId, from, to} = req.body
+    console.log({ weekId, day, date, shiftId, from, to })
 
     Employee.findByIdAndUpdate(
         req.params.id, 
-        { $push: {shifts: { weekId, day, date, shiftIndex, from, to } } }, 
+        { $push: {shifts: { weekId, day, date, shiftId, from, to } } }, 
         {new: true} 
         )
         .then(response => {
@@ -63,6 +63,25 @@ const addShift = (req, res) => {
             console.log(err)
             res.send(err)
         })
+}
+
+const removeShift = (req, res) => {
+
+    
+    const { shift } = req.body
+    console.log(shift)
+
+    Employee.findByIdAndUpdate(
+        req.params.id,
+        { $pull: {shifts: { shiftId: shift } } },
+        {new: true}
+    ).then(response => {
+        console.log(response)
+        res.send(response)
+    }).catch(err => {
+        console.log(err)
+        res.send(err)
+    })
 }
 
 const adminFix = (req, res) => {
@@ -85,4 +104,4 @@ const adminFix = (req, res) => {
     res.send('seeding')
 }
 
-module.exports = { getAllEmployees, createEmployee, searchFor, adminFix, addShift }
+module.exports = { getAllEmployees, createEmployee, searchFor, adminFix, addShift, removeShift }

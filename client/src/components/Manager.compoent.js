@@ -80,18 +80,23 @@ const Manager = (props) => {
 
     // select active shift card
     const selectCard = (e) => {
-        const day = e.target.id.split('-')[0]
-        const index = e.target.id.split('-')[2]
-        setCard([day, index])
-        let update = week
-        daysOfWeek.map(day => {
-            week[day].shifts.map(shift => {
-                shift.selected = false
+        if (e.target.id === "remove-worker") {
+            return null
+        } else {
+            const day = e.target.id.split('-')[0]
+            const index = e.target.id.split('-')[2]
+            setCard([day, index])
+            let update = week
+            daysOfWeek.map(day => {
+                week[day].shifts.map(shift => {
+                    shift.selected = false
+                })
             })
-        })
-        update[day].shifts[index].selected = true
-        setWeek(update)
+            update[day].shifts[index].selected = true
+            setWeek(update)
+        }
     }
+
 
     // 3 part rending of shift cards
     const renderShifts = (day) => {
@@ -102,7 +107,17 @@ const Manager = (props) => {
             let onShift = []
             shift.employees.map(employee => {
                 onShift.push(
-                    <span className="worker-name" id={`${day}-worker-${counter}`} > <img id={`${day}-img-${counter}`} src={avatarDefault} /> {employee.name} </span>
+                    <span className="worker-name" id={`${day}-worker-${counter}`} > 
+                        <div id={`${day}-workwrap-${counter}`} src={avatarDefault}>
+                            <img id={`${day}-img-${counter}`} src={avatarDefault} /> 
+                            {employee.name} 
+                        </div>
+                        <i 
+                            className="fas fa-times-circle" 
+                            id="remove-worker" 
+                            onClick={() => removeFromShift(employee.employeeId, shift._id, week._id, day)}
+                        ></i>
+                    </span>
                 )
             })
             output.push(
@@ -159,15 +174,6 @@ const Manager = (props) => {
         return height
     }
 
-    // deleting shift card
-    const deleteShift = (e) => {
-        const day = e.target.id.split('-')[0]
-        const index = e.target.id.split('-')[2]
-        let update = week
-        update[day].shifts.splice(index, 1)
-        setWeek(update)
-    }
-
     const renderDate = (day) => {
         if (week[day]) {
             let date = week[day].date.split('/')
@@ -184,10 +190,12 @@ const Manager = (props) => {
                 weekId: week._id,
                 day: activeCard[0],
                 date: week[activeCard[0]].date,
-                shiftIndex: activeCard[1],
+                shiftId: week[activeCard[0]].shifts[activeCard[1]]._id,
                 from: week[activeCard[0]].shifts[activeCard[1]].from,
                 to: week[activeCard[0]].shifts[activeCard[1]].to
             }
+
+            console.log(req)
             axios.put(`/api/employees/add-shift/${employee._id}`, req)
                 .then(response => {
                     console.log(response)
@@ -213,6 +221,28 @@ const Manager = (props) => {
         } else {
             return null
         }
+    }
+
+    const removeFromShift = (employee, shift, weekId, dayOfWeek) => {
+
+        // delete from shift's employee list (weekId, day employeeId, shift_id)
+        console.log(employee, shift, weekId, dayOfWeek)
+        axios.put(`/api/weeks/remove-employee/${weekId}`, { employee, shift, weekId, dayOfWeek })
+            .then(response => {
+                if (response.status === 200) {
+                    setUpdateWeek(true)
+                }
+            })
+            .catch(err => console.log(err))
+
+        // delete from worker's shift list (employeeId, shiftId)
+        axios.put(`/api/employees/remove-shift/${employee}`, {shift})
+            .then(response => {
+                console.log(response)
+            })
+            .catch(err => console.log(err))
+
+        // console.log('delete please')
     }
 
     return (

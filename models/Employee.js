@@ -18,7 +18,7 @@ const Employee = new Schema({
         weekId: String,
         day: String,
         date: String,
-        shiftIndex: Number,
+        shiftId: String,
         from: String,
         to: String,
     }] 

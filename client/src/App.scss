@@ -180,11 +180,19 @@ input {
         margin-bottom: 5px;
         display: flex;
         align-items: center;
+        div {
+            display: flex;
+            align-items: center;
+        }
+        justify-content: space-between;
         img {
             width: 25px;
             height: 25px;
             border-radius: 100%;
             margin-right: 5px;
+        }
+        i {
+            margin-left: 3px;
         }
     }
 }
@@ -287,15 +295,15 @@ button {
                 font-weight: 500;
                 padding: 0 20px;
             }
-            .shift-wrapper {
-                position: relative;
-                i {
-                    position: absolute;
-                    top: 3%;
-                    right: 15%;
-                    cursor: pointer;
-                }
-            }
+            // .shift-wrapper {
+            //     position: relative;
+            //     i {
+            //         position: absolute;
+            //         top: 3%;
+            //         right: 15%;
+            //         cursor: pointer;
+            //     }
+            // }
             .shift-card {
                 cursor: pointer;
                 padding: 10px;
