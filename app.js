@@ -12,6 +12,8 @@ const path = require('path')
 // route imports
 const authRouter = require('./routes/auth_routes')
 const userRouter = require('./routes/user_routes')
+const weekRouter = require('./routes/week_routes')
+const employeeRouter = require('./routes/employee_routes')
 
 // initiating server
 const port = process.env.PORT || 3005;
@@ -61,6 +63,8 @@ app.use(passport.session())
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter)
+app.use('/api/weeks', weekRouter)
+app.use('/api/employees', employeeRouter)
 
 
 // Deployment redirect to static assets

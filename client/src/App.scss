@@ -1,11 +1,97 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
+$primary-color: #e227e2;
+
 body {
+    font-family: 'Montserrat', 'sans-serif';
+}
+input {
     font-family: 'Montserrat', 'sans-serif';
 }
 
 #landing-page-container {
+    padding: 5vh 5vw;
+    h3 {
+        span {
+            color: $primary-color
+        }
+    }
+    button {
+        background-color: #1DB954;
+        padding: 10px;
+        color: white;
+        font-weight: 700;
+        border-radius: 5px;
+    }
+    #week-list {
+        padding-top: 20px;
+    }
+}
+#home-btn {
+    background-color: #e227e2;
+    color: white;
+    font-weight: 700;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#employees-page-container {
+    padding: 5vh 5vw;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: row;
+    #ep-left {
+        padding-right: 50px;
+        border-right: 1px solid $primary-color;
+    }
+    .form {
+        input {
+            width: 300px;
+        }
+    }
+    #flash-msg {
+        font-size: 0.8em;
+        font-weight: 700;
+    }
+    #employee-list {
+        padding: 5vh 5vw;
+        #search-input {
+            padding: 10px;
+            width: 500px;
+        }
+        #list-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        div {
+            padding-top: 5px;
+        }
+        .employee-card {
+            width: 300px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: row;
+            cursor: pointer;
+            overflow: hidden;
+            img {
+                width: 70px;
+                height: 70px;
+                border-radius: 100%;
+                margin-right: 20px;
+            }
+            span {
+                &:first-child {
+                    font-weight: 600;
+                    font-size: 1em;
+                }
+                font-size: 0.8em;
+            }
+        }
+    }
+}
+
+#week-page-container {
     padding: 5vh 3vw;
     #week-input-container {
         #hours-input {
@@ -18,6 +104,9 @@ body {
             margin-right: 20px;
         }
         padding-bottom: 20px;
+        #finish-btn {
+            margin-left: 90%;
+        }
     }
 
     #week-display {
@@ -28,6 +117,15 @@ body {
         height: 50vh;
         .day-col {
             width: 15vw;
+        }
+        .shift-wrapper {
+            position: relative;
+            i {
+                position: absolute;
+                top: 5px;
+                right: 10%;
+                cursor: pointer;
+            }
         }
         .shift-card {
             padding: 10px;
@@ -41,6 +139,13 @@ body {
             margin: 5px 0;
             span {
                 font-weight: 500;
+            }
+        }
+        button {
+            display: flex;
+            flex-direction: row;
+            div {
+                margin-left: 5px;
             }
         }
     }
@@ -84,4 +189,93 @@ button {
     #flash {
         font-size: 0.8em;
     }
+}
+
+#mananger-page-container {
+    display: flex;
+    flex-direction: row;
+    #workforce-panel {
+        min-width: 220px;
+        max-width: 220px;
+        border-right: 1px solid $primary-color;
+        height: 100vh;
+        overflow: scroll;
+        input {
+            padding: 5px 10px;
+            margin-left: 10px; 
+            margin-bottom: 20px;
+        }
+        .home-btn {
+            background-color: $primary-color;
+            color: white;
+            font-weight: 600;
+            font-size: 1.3em;
+            width: 100%;
+            &:hover {
+                background-color: #1DB954;
+            }
+        }
+        div {
+            display: flex;
+            flex-direction: column;
+        }
+        button {
+            // width: 350px;
+            padding-left: 20px;
+            cursor: pointer;
+            text-align: left;
+            &:hover {
+                background-color: #f0f0f0;
+            }
+            span {
+                font-weight: 600;
+            }
+        }
+    }
+    #week-planner {
+        display: flex;
+        flex-direction: row;
+        padding: 20px;
+        overflow: scroll;
+        background-color: #f0f0f0;
+        .day-col {
+            height: 95vh;
+            min-width: 300px;
+            max-width: 300px;
+            margin-right: 10px;
+            &:nth-child(7) {
+                padding-right: 50vw;
+            }
+            p {
+                font-weight: 500;
+                padding: 0 20px;
+            }
+            .shift-wrapper {
+                position: relative;
+                i {
+                    position: absolute;
+                    top: 3%;
+                    right: 15%;
+                    cursor: pointer;
+                }
+            }
+            .shift-card {
+                cursor: pointer;
+                padding: 10px;
+                width: 80%;
+                background-color: white;
+                border-radius: 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                margin: 5px 0;
+                span {
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+    
+    
 }
