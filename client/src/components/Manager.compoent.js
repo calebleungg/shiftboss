@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import avatarDefault from '../images/default-pic.png'
 
 const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','sunday']
 
@@ -9,13 +10,24 @@ const Manager = (props) => {
     
     const [week, setWeek] = useState({})
     const [workforce, setWorkForce] = useState([])
-    const [update, setUpdate] = useState(false)
+    const [updateEmployees, setUpdateEmp ] = useState(false)
+    const [updateWeek, setUpdateWeek ] = useState(false)
     const [loading, setLoading] = useState(true)
     const [activeCard, setCard] = useState(null)
     // activeCard needs [day, indexOfShift]
 
     // inital info call
     useEffect(() => {
+        getApiWeek()
+    },[updateWeek])
+
+    // update list on empty search
+    useEffect(() => {
+        getApiEmployees()
+    }, [updateEmployees])
+
+    // get weekd data
+    const getApiWeek = () => {
         const date = props.match.params.date.split('-').join('/')
         axios.get(`/api/weeks/bydate?date=${date}`)
             .then(response => {
@@ -27,21 +39,17 @@ const Manager = (props) => {
                 })
                 setWeek(week)
                 setLoading(false)
+                setUpdateWeek(false)
             })
             .catch(err => console.log(err))
-    },[])
-
-    // update list on empty search
-    useEffect(() => {
-        getApiEmployees()
-    }, [update])
+    }
 
     // get employees on api endpoint
     const getApiEmployees = () => {
         axios.get('/api/employees')
             .then(response => {
                 setWorkForce(response.data)
-                setUpdate(false)
+                setUpdateEmp(false)
             })
             .catch(err => console.log(err))
     }
@@ -49,7 +57,7 @@ const Manager = (props) => {
     // query on search input
     const handleSearch = (e) => {
         if (e.target.value === '') {
-            setUpdate(true)
+            setUpdateEmp(true)
         } else {
             axios.get(`/api/employees/search/${e.target.value}`)
                 .then(response => {
@@ -64,12 +72,13 @@ const Manager = (props) => {
         let output = []
         workforce.map(employee => {
             output.push(
-                <button> {`${employee.firstName[0].toUpperCase()}. ${employee.lastName}`} </button>
+                <button onClick={() => addToShift(employee)} > {`${employee.firstName[0].toUpperCase()}. ${employee.lastName}`} </button>
             )
         })
         return output
     }
 
+    // select active shift card
     const selectCard = (e) => {
         const day = e.target.id.split('-')[0]
         const index = e.target.id.split('-')[2]
@@ -90,6 +99,12 @@ const Manager = (props) => {
         let counter = 0
         week[day].shifts.map(shift => {
             const boxHeight = shiftBoxHeight(Number(shift.from.split(':')[0]), Number(shift.to.split(':')[0]))
+            let onShift = []
+            shift.employees.map(employee => {
+                onShift.push(
+                    <span className="worker-name" id={`${day}-worker-${counter}`} > <img id={`${day}-img-${counter}`} src={avatarDefault} /> {employee.name} </span>
+                )
+            })
             output.push(
                 <div className="shift-wrapper" key={`${day}-shift-${counter}`}>
                     <div 
@@ -99,20 +114,31 @@ const Manager = (props) => {
                             shift.selected ?
                                 {
                                     border: "3px solid #1DB954",
-                                    height:`${boxHeight}vh`
+                                    minHeight:`${boxHeight}vh`
                                 }
                                 :
                                 {
-                                    height:`${boxHeight}vh`
+                                    minHeight:`${boxHeight}vh`
                                 }
                         }
                         onClick={(e) => selectCard(e)} 
                         id={`${day}-card-${counter}`} 
                     >
-                        <span> {shift.from} </span>
-                        <span> {shift.to} </span>
+                        <span id={`${day}-from-${counter}`} > {shift.from} </span>
+                        <div 
+                            className="shift-workers" 
+                            id={`${day}-workerlist-${counter}`} 
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                fontSize: "0.9em",
+                            }}
+                        >
+                            {onShift}
+                        </div>
+                        <span id={`${day}-to-${counter}`} > {shift.to} </span>
                     </div>
-                    <i className="fas fa-times-circle" onClick={(e) => deleteShift(e)} id={`${day}-shift-${counter}`} ></i>
+                    {/* <i className="fas fa-times-circle" onClick={(e) => deleteShift(e)} id={`${day}-shift-${counter}`} ></i> */}
                 </div>
             )
             counter++
@@ -129,7 +155,7 @@ const Manager = (props) => {
             }
             return (to - from)
         }
-        const height = (timeLength() / 24 * 80)
+        const height = (timeLength() / week.hoursPerDay * 80)
         return height
     }
 
@@ -139,8 +165,54 @@ const Manager = (props) => {
         const index = e.target.id.split('-')[2]
         let update = week
         update[day].shifts.splice(index, 1)
-        setUpdate(true)
         setWeek(update)
+    }
+
+    const renderDate = (day) => {
+        if (week[day]) {
+            let date = week[day].date.split('/')
+            return `${date[0]}/${date[1]}`
+        }
+        return null
+    }
+
+    // add worker
+    const addToShift = (employee) => {
+        if (activeCard) {
+            // add shift to employee's shift list
+            const req = {
+                weekId: week._id,
+                day: activeCard[0],
+                date: week[activeCard[0]].date,
+                shiftIndex: activeCard[1],
+                from: week[activeCard[0]].shifts[activeCard[1]].from,
+                to: week[activeCard[0]].shifts[activeCard[1]].to
+            }
+            axios.put(`/api/employees/add-shift/${employee._id}`, req)
+                .then(response => {
+                    console.log(response)
+                })
+                .catch(err => console.log(err))
+            
+            // add employee to shifts employee list
+            const worker = {
+                employeeId: employee._id,
+                name: `${employee.firstName} ${employee.lastName}`,
+                day: activeCard[0],
+                shiftIndex: activeCard[1]
+            }
+            axios.put(`/api/weeks/add-employee/${week._id}`, worker)
+                .then(response => {
+                    console.log(response)
+                    setUpdateWeek(true)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+        } else {
+            return null
+        }
     }
 
     return (
@@ -159,39 +231,39 @@ const Manager = (props) => {
                     <p onClick={()=> {
                         console.log(week)
                         console.log(activeCard)
-                    }}>Monday</p>
+                    }}>Monday ({renderDate('monday')}) </p>
                     <div>
                         {!loading ? renderShifts('monday') : null}
                     </div>
                 </div>
 
                 <div className='day-col'>
-                    <p>Tuesday</p>
+                    <p>Tuesday ({renderDate('tuesday')}) </p>
                     {!loading ? renderShifts('tuesday') : null}
                 </div>
 
                 <div className='day-col'>
-                    <p>Wednesday</p>
+                    <p>Wednesday  ({renderDate('wednesday')})</p>
                     {!loading ? renderShifts('wednesday') : null}
                 </div>
 
                 <div className='day-col'>
-                    <p>Thursday</p>
+                    <p>Thursday ({renderDate('thursday')})</p>
                     {!loading ? renderShifts('thursday') : null}
                 </div>
 
                 <div className='day-col'>
-                    <p>Friday</p>
+                    <p>Friday ({renderDate('friday')})</p>
                     {!loading ? renderShifts('friday') : null}
                 </div>
 
                 <div className='day-col'>
-                    <p>Saturday</p>
+                    <p>Saturday ({renderDate('saturday')})</p>
                     {!loading ? renderShifts('saturday') : null}
                 </div>
 
                 <div className='day-col'>
-                    <p>Sunday</p>
+                    <p>Sunday ({renderDate('sunday')})</p>
                     {!loading ? renderShifts('sunday') : null}
                 </div>
             </div>

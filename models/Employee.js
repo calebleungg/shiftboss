@@ -15,8 +15,12 @@ const Employee = new Schema({
         type: String
     },
     shifts: [{
+        weekId: String,
+        day: String,
         date: String,
-        shift: String
+        shiftIndex: Number,
+        from: String,
+        to: String,
     }] 
 });
 

@@ -2,6 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Week = new Schema({
+    hoursPerDay: {
+        type:String
+    },
+    isTemplate: {
+        check: {
+            type: Boolean,
+            default: false
+        },
+        name: String
+    },
     monday: {
         date: String,
         shifts: [
@@ -9,6 +19,7 @@ const Week = new Schema({
                 from: String,
                 to: String,
                 employees: [{
+                    employeeId: String,
                     name: String
                 }]
             }
@@ -21,6 +32,7 @@ const Week = new Schema({
                 from: String,
                 to: String,
                 employees: [{
+                    employeeId: String,
                     name: String
                 }]
             }
@@ -33,6 +45,7 @@ const Week = new Schema({
                 from: String,
                 to: String,
                 employees: [{
+                    employeeId: String,
                     name: String
                 }]
             }
@@ -45,6 +58,7 @@ const Week = new Schema({
                 from: String,
                 to: String,
                 employees: [{
+                    employeeId: String,
                     name: String
                 }]
             }
@@ -57,6 +71,7 @@ const Week = new Schema({
                 from: String,
                 to: String,
                 employees: [{
+                    employeeId: String,
                     name: String
                 }]
             }
@@ -69,6 +84,7 @@ const Week = new Schema({
                 from: String,
                 to: String,
                 employees: [{
+                    employeeId: String,
                     name: String
                 }]
             }
@@ -81,6 +97,7 @@ const Week = new Schema({
                 from: String,
                 to: String,
                 employees: [{
+                    employeeId: String,
                     name: String
                 }]
             }

@@ -27,6 +27,14 @@ input {
     #week-list {
         padding-top: 20px;
     }
+    #week-list-wrapper {
+        display: flex;
+        flex-direction: column;
+        a {
+            margin-bottom: 5px;
+            width: 200px;
+        }
+    }
 }
 #home-btn {
     background-color: #e227e2;
@@ -104,8 +112,22 @@ input {
             margin-right: 20px;
         }
         padding-bottom: 20px;
+        #save-template-btn {
+            margin-left: 20px;
+        }
         #finish-btn {
-            margin-left: 90%;
+            margin-left: 60%;
+        }
+        #template-input {
+            width: 300px;
+            margin-left: 10px;
+        }
+        select {
+            font-family: 'Montserrat', 'sans-serif';
+            padding: 9px;
+            margin-left: 10px;
+            width: 200px;
+            border: 1px solid lightgrey;
         }
     }
 
@@ -150,6 +172,21 @@ input {
         }
     }
     
+}
+.shift-workers {
+    span {
+        float: left;
+        color: #555555;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        img {
+            width: 25px;
+            height: 25px;
+            border-radius: 100%;
+            margin-right: 5px;
+        }
+    }
 }
 
 button {
@@ -264,6 +301,7 @@ button {
                 padding: 10px;
                 width: 80%;
                 background-color: white;
+                border: 3px solid white;
                 border-radius: 10px;
                 display: flex;
                 flex-direction: column;

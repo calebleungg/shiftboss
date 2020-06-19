@@ -45,6 +45,9 @@ const WeekCreate = () => {
     const [fromInput, setFromInput] = useState(null)
     const [toInput, setToInput] = useState(null)
     const [update, setUpdate] = useState(false)
+    const [templateInput, setTemplateInput] = useState('New Template')
+    const [selectedTemp, setSelectedTemp] = useState(null)
+    const [templates, setTemplates] = useState([])
 
     const [flash, setFlash] = useState(null)
 
@@ -58,7 +61,14 @@ const WeekCreate = () => {
     }, [flash])
 
     useEffect(() => {
-        console.log('updated')
+        
+        // getting templates
+        axios.get('/api/weeks/templates')
+            .then(response => {
+                setTemplates(response.data)
+            })
+            .catch(err => console.log(err))
+
         setUpdate(false)
     },[update])
 
@@ -136,7 +146,42 @@ const WeekCreate = () => {
         week[day].date = document.getElementById(id) ? document.getElementById(id).innerHTML + `/${year}`  : null
         setWeek(update)
         setUpdate(true)
-    
+    }
+
+    const saveTemplate = () => {
+        const req = {
+            isTemplate: {
+                check: true,
+                name: templateInput
+            },
+            monday: week.monday,
+            tuesday: week.tuesday,
+            wednesday: week.wednesday,
+            thursday: week.thursday,
+            friday: week.friday,
+            saturday: week.saturday,
+            sunday: week.sunday,
+            hoursPerDay: hoursPerDay
+        }
+        axios.post('/api/weeks/create',req)
+            .then(response => {
+                if (response.status === 200) {
+                    setFlash({
+                        success: true,
+                        message: "Week has been created successfully"
+                    })
+                    setUpdate(true)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                setFlash({
+                    flash:{
+                        success: false,
+                        message: "There was an error creating your Week. Check dev logs."
+                    }
+                })
+            })
     }
 
     const handleCreateWeek = () => {
@@ -154,6 +199,7 @@ const WeekCreate = () => {
                 friday: week.friday,
                 saturday: week.saturday,
                 sunday: week.sunday,
+                hoursPerDay: hoursPerDay
             }
             console.log(req)
             axios.post('/api/weeks/create',req)
@@ -180,7 +226,28 @@ const WeekCreate = () => {
                 message: "Please set a start date on Monday"
             })
         }
+    }
 
+    const renderTemplateList = () => {
+        let output = []
+        templates.map(template => {
+            output.push(
+                <option value={template._id} > {template.isTemplate.name} </option>
+            )
+        })
+        return output
+    }
+
+    const applyTemplate = (e) => {
+        // console.log(e.target.value)
+        for (let temp of templates) {
+            const { monday, tuesday, wednesday, thursday, friday, saturday, sunday, hoursPerDay } = temp
+            console.log(temp)
+            if (temp._id === e.target.value) {
+                setWeek({ monday, tuesday, wednesday, thursday, friday, saturday, sunday })
+                setHoursPerDay(hoursPerDay)
+            }
+        }
     }
 
 
@@ -196,7 +263,15 @@ const WeekCreate = () => {
                         type="date" 
                         id="date-input" 
                         onChange={(e) => setWeekStart(e.target.value)} 
-                    /><br/>
+                    />
+                    <button id="save-template-btn" onClick={saveTemplate}> Save to templates </button> 
+                    <input type="text" id="template-input" value={templateInput} onChange={(e) => setTemplateInput(e.target.value)} /> 
+                    <select onChange={(e) => applyTemplate(e)} >
+                        <option> - Select template - </option>
+                        {renderTemplateList()}
+                    </select>
+                    
+                    <br/>
 
                     <span>Hours / Day: </span> 
                     <input 
@@ -228,7 +303,9 @@ const WeekCreate = () => {
                             :
                             null
                     }
-                    <button onClick={handleAdd} > add </button> <button id="finish-btn" onClick={handleCreateWeek} > finish </button>
+                    
+                    <button onClick={handleAdd} > add </button> 
+                    <button id="finish-btn" onClick={handleCreateWeek} > finish </button>
                 </div>
             </div>
             <div id="week-display">
