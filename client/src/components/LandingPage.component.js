@@ -39,8 +39,7 @@ const LandingPage = () => {
 
     return (
         <div id="landing-page-container">
-            <h3> Kristy's <span>personalised</span> schedule app called <span>ShiftBoss</span></h3>
-            <p> (because apparently she couldnt find another one already created... ) </p>
+            <h3><span>ShiftBoss</span></h3>
             <Link to="/create-week"> <button> Create Week </button> </Link> <br/><br/>
             <Link to="/employees"> <button> Employees </button> </Link> 
             <div id="week-list">

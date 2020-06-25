@@ -8,12 +8,12 @@ import Manager from './components/Manager.compoent'
 
 function App() {
   return (
-    <Router>
-			<Route path="/" exact component={LandingPage} />
-			<Route path="/create-week" exact component={WeekCreate} />
-			<Route path="/employees" exact component={EmployeesPage} />
-			<Route path="/week/:date" exact component={Manager} />
-		</Router>
+	<Router>
+		<Route path="/" exact component={LandingPage} />
+		<Route path="/create-week" exact component={WeekCreate} />
+		<Route path="/employees" exact component={EmployeesPage} />
+		<Route path="/week/:date" exact component={Manager} />
+	</Router>
   );
 }
 

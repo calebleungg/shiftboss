@@ -102,23 +102,30 @@ const Manager = (props) => {
     const renderShifts = (day) => {
         let output = []
         let counter = 0
+        let filter = []
+        workforce.map(employee => {
+            filter.push(employee._id)
+        })
         week[day].shifts.map(shift => {
             const boxHeight = shiftBoxHeight(Number(shift.from.split(':')[0]), Number(shift.to.split(':')[0]))
             let onShift = []
             shift.employees.map(employee => {
-                onShift.push(
-                    <span className="worker-name" id={`${day}-worker-${counter}`} > 
-                        <div id={`${day}-workwrap-${counter}`} src={avatarDefault}>
-                            <img id={`${day}-img-${counter}`} src={avatarDefault} /> 
-                            {employee.name} 
-                        </div>
-                        <i 
-                            className="fas fa-times-circle" 
-                            id="remove-worker" 
-                            onClick={() => removeFromShift(employee.employeeId, shift._id, week._id, day)}
-                        ></i>
-                    </span>
-                )
+                if (filter.includes(employee.employeeId)) {
+                    onShift.push(
+                        <span className="worker-name" id={`${day}-worker-${counter}`} > 
+                            <div id={`${day}-workwrap-${counter}`} src={avatarDefault}>
+                                <img id={`${day}-img-${counter}`} src={avatarDefault} /> 
+                                {employee.name} 
+                            </div>
+                            <i 
+                                className="fas fa-times-circle" 
+                                id="remove-worker" 
+                                onClick={() => removeFromShift(employee.employeeId, shift._id, week._id, day)}
+                            ></i>
+                        </span>
+                    )
+                }
+                
             })
             output.push(
                 <div className="shift-wrapper" key={`${day}-shift-${counter}`}>
